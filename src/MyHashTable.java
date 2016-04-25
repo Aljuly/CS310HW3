@@ -1,46 +1,136 @@
+import java.util.Arrays;
+
 public class MyHashTable<T> {
   protected static final int DEFAULTTABLESIZE = 101; 
   protected int size;
   protected int tableSize;
   protected Object[] table;
- 
+  private boolean[] primes;
+  
+  // Sieve of Eratosthenes (https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes)
+  
+  //http://algs4.cs.princeton.edu/34hash/SeparateChainingHashST.java.html
+  //http://www.java2s.com/Code/Java/Collections-Data-Structure/Hashtablewithseparatechaining.htm
+  
+  
+  private void fillSieve(int n) {
+	  primes=new boolean[n];
+	  Arrays.fill(primes,true);
+	  primes[0]=primes[1]=false;
+	  for (int i=2;i<primes.length;i++) {
+	      if(primes[i]) {
+	          for (int j=2;i*j<primes.length;j++) {
+	                primes[i*j]=false;
+	          }
+	      }
+	  }
+  } 
+  
   // Workhorse constructor. The internal table size is tableSize if
   // tableSize is prime or the next prime number that is
   // greater than tableSize if tableSize is not prime.
-  public MyHashTable( int tableSize );
+  public MyHashTable( int tableSize ) {
+	  fillSieve(tableSize + 20);
+	  this.tableSize = tableSize;
+	  this.size = 0;
+	  // primes[i] = true denotes that i is prime number 
+	  if (primes[this.tableSize]) {
+		  table = new Object[this.tableSize];
+	  } else {
+		  while ((!primes[this.tableSize]) && (this.tableSize <= tableSize + 20)) {
+			  this.tableSize++;
+		  }
+		  table = new Object[this.tableSize];
+	  }
+	  // fill the table
+	  for (int i = 0; i < this.tableSize; i++) {
+		  table[i] = new LinkedArrays<T>();
+	  }
+  }
  
   // Convenience constructor. DEFAULTTABLESIZE is 101
-  public MyHashTable( );
+  public MyHashTable( ) {
+	  this(DEFAULTTABLESIZE);
+  }
   
   // Make the hash table logically empty.
   // Target Complexity: O(n)
-  public void clear( );
+  public void clear( ) {
+	  
+  }
  
   // Insert x into the hash table. If x is already present, then do 
   // nothing.
   // Throws IllegalArgumentException if x is null.
-  public void insert(T x);
+  @SuppressWarnings("unchecked")
+  public void insert(T x) {
+	  int hashVal;
+	  if (x == null) {
+		  throw new IllegalArgumentException("Exception! Inserting Null value! ");
+	  } else {
+		 hashVal = myhash(x);
+		 if (!((LinkedArrays<T>) table[hashVal]).contains(x)) {
+			 ((LinkedArrays<T>) table[hashVal]).add(x);
+			 this.size++;
+		 }
+	  }
+  }
  
   // Remove x from the hash table.
   // Throws IllegalArgumentException if x is null.
-  public void remove( T x );
+  @SuppressWarnings("unchecked")
+  public void remove(T x) {
+	  int hashVal;
+	  if (x == null) {
+		  throw new IllegalArgumentException("Exception! Inserting Null value! ");
+	  } else {
+		  hashVal = myhash(x);
+		  if (((LinkedArrays<T>) table[hashVal]).remove(x) != null) this.size--;
+	  }
+  }
  
   // Return true if x is in the hash table
   // Throws IllegalArgumentException if x is null.
-  public boolean contains(T x );
+  @SuppressWarnings("unchecked")
+  public boolean contains(T x) {
+	  int hashVal;
+	  if (x == null) {
+		  throw new IllegalArgumentException("Exception! Inserting Null value! ");
+	  } else {
+		  hashVal = myhash(x);
+		  return ((LinkedArrays<T>) table[hashVal]).contains(x);
+	  }
+  }
  
   // Return the first element in the hashed-to LinkedArrays that equals 
   // x, or null if there is no such element.
   // Throws IllegalArgumentException if x is null.
-  public T getMatch(T x);
+  @SuppressWarnings("unchecked")
+  public T getMatch(T x) {
+	  int hashVal;
+	  if (x == null) {
+		  throw new IllegalArgumentException("Exception! Inserting Null value! ");
+	  } else {
+		  hashVal = myhash(x);
+		  return ((LinkedArrays<T>) table[hashVal]).getMatch(x);
+	  }
+  }
  
   // Returns the number of elements
   // Target Complexity: O(1)
-  public int size();
+  public int size() {
+	  return (int) this.size;
+  }
  
   // Returns true if there are no elements.
   // Target Complexity: O(1)
-  public boolean isEmpty( );
+  public boolean isEmpty() {
+	  if (this.size == 0) {
+		  return true; 
+	  } else {
+		  return false;
+	  }
+  }
  
   // Returns a Set containing all of the T elements in the table. (Set is
   // an interface implemented by classes HashSet and TreeSet.)
@@ -74,8 +164,7 @@ public class MyHashTable<T> {
   protected static int nextPrime(int n ){
     if( n % 2 == 0 )
       n++;
-    for( ; !isPrime( n ); n += 2 )
-      ;
+    for( ; !isPrime( n ); n += 2 );
     return n;
   }
  
