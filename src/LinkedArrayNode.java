@@ -32,7 +32,7 @@ public class LinkedArrayNode<T> {
 	  this(prev, next, DEFAULTLENGTHOFARRAY);
   }
 
-// Add element x to the end of the array.
+  // Add element x to the end of the array.
   // Throws IllegalArgumentException if x is null.
   // Target Complexity: O(1)
   public void add(T x) throws IllegalArgumentException {
@@ -45,7 +45,13 @@ public class LinkedArrayNode<T> {
 		  }
 	  }
   }
- 
+  
+  // Returns the number of elements
+  public int getCurpos() {
+	  return curpos;
+  }
+  
+  
   // Locate and remove the first element that equals x. This may require 
   // elements to be shifted (left). Returns a reference to the removed 
   // element, or null if the element was not removed.
@@ -99,6 +105,8 @@ public class LinkedArrayNode<T> {
 	  }
 	  return y;
   }
+  
+  
  
   // toString() - create a pretty representation of the node by
   // showing all of the elements in the array.
