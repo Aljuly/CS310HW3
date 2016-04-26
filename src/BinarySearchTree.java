@@ -24,7 +24,7 @@ public class BinarySearchTree<T extends Comparable<? super T>> {
 			  throw new IllegalArgumentException("Exception! Null value! ");
 		  } else {
 			  if (L.size() > 0) {
-				  this.buildTree(0, 10, L);
+				  root = buildTree(0, L.size()-1, L);
 			  }
 		  }
 	}
@@ -37,10 +37,16 @@ public class BinarySearchTree<T extends Comparable<? super T>> {
 	// Called by BinarySearchTree(List<T> L) and balance().
 	// This is a recursive method.
 	protected TreeNode<T> buildTree(int start, int end, List<T> L) {
+		int index = 0;
 		if (start > end) return null;
 		TreeNode<T> left = buildTree(start, middle(start, end) - 1, L);
-		TreeNode<T> parent = 
-	} //http://articles.leetcode.com/convert-sorted-list-to-balanced-binary/
+		TreeNode<T> parent = new TreeNode<T>(L.get(index), null, null, null);
+		parent.left = left;
+		index++;
+		size++;
+		parent.right = buildTree(start, middle(start, end) + 1, L);
+		return parent;
+	} 
  
 	// If x is not already in the tree, inserts x and returns true.
 	// If x is already in the tree, does not insert x and returns false.
@@ -372,7 +378,8 @@ public class BinarySearchTree<T extends Comparable<? super T>> {
 	// List of the elements in the tree, and start and end are the positions 
 	// at the beginning and end of L.
 	public void balance() {
-		
+		List<T> L = getSortedListOfElements();
+		root = buildTree(0, L.size()-1, L);
 	}
  
 	// Helper middle to compute the middle position of a sub-list

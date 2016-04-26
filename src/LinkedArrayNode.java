@@ -5,7 +5,7 @@ public class LinkedArrayNode<T> {
   protected Object[] array;          // array holds T objects
   protected static final int DEFAULTLENGTHOFARRAY = 16;
   protected int arraySize;    // number of elements in the array.
-  private int curpos;	// current position in the array
+  private int lengthOfArray;	// current position in the array
  
   // Workhorse constructor. Initialize prev and next and the size of the
   // array, and create an array of Objects of the specified length.
@@ -16,12 +16,12 @@ public class LinkedArrayNode<T> {
 		  LinkedArrayNode<T> next, int lengthOfArray) throws IllegalArgumentException {
 	  this.prev = prev;
 	  this.next = next;
-	  this.curpos = 0;
+	  this.lengthOfArray = lengthOfArray;
 	  if (lengthOfArray < 0) {
 		  throw new IllegalArgumentException("Exception! Length Of Array less then 0!: " + lengthOfArray); 
 	  } else {
-		  this.arraySize = lengthOfArray;
-		  this.array = new Object[this.arraySize];
+		  this.arraySize = 0;
+		  this.array = new Object[lengthOfArray];
 	  }
   }
  
@@ -39,18 +39,12 @@ public class LinkedArrayNode<T> {
 	  if (x == null) {
 		  throw new IllegalArgumentException("Exception! adding value is Null! ");
 	  } else {
-		  if (curpos < arraySize) { 
-			  array[curpos] = x;  
-			  curpos++;
+		  if (arraySize < lengthOfArray) { 
+			  array[arraySize] = x;  
+			  arraySize++;
 		  }
 	  }
-  }
-  
-  // Returns the number of elements
-  public int getCurpos() {
-	  return curpos;
-  }
-  
+  } 
   
   // Locate and remove the first element that equals x. This may require 
   // elements to be shifted (left). Returns a reference to the removed 
@@ -65,18 +59,18 @@ public class LinkedArrayNode<T> {
 	  if (x == null) {
 		  throw new IllegalArgumentException("Exception! removing value is Null! ");
 	  } else {
-		  for (int i = 0; i < arraySize; i++) {
+		  for (int i = 0; i < lengthOfArray; i++) {
 			  k = i;
-			  if (array[i] == x) {
+			  if (array[i].equals(x)) {
 				  y = (T)array[i];
 				  finded = true;
-				  curpos--;
+				  arraySize--;
 				  break;
 			  }
 		  } 
 		  if (finded) {
 			  int i = k;
-			  while ((i < arraySize - 1) && (array[i] != null)) {
+			  while ((i < lengthOfArray - 1) && (!array[i].equals(null))) {
 				  array[i] = array[i+1];
 				  i++;
 			  }
@@ -92,18 +86,16 @@ public class LinkedArrayNode<T> {
   // Target Complexity: O(N)
   @SuppressWarnings("unchecked")
   public T getMatch(T x){
-	  T y = null;
 	  if (x == null) {
 		  throw new IllegalArgumentException("Exception! searching for Null value! ");
 	  } else {
 		  for (int i = 0; i < arraySize; i++) {
-			  if (array[i] == x) {
-				  y = (T)array[i];
-				  break;
+			  if (array[i].equals(x)) {
+				  return (T) array[i];
 			  }
 		  } 
 	  }
-	  return y;
+	  return null;
   }
   
   
@@ -114,9 +106,9 @@ public class LinkedArrayNode<T> {
   // Example: an array with size four and length five: 1, 2, 4, 6
   public String toString(){
 	  String n = "";
-	  for (int i = 0; i <= curpos; i++) {
-		  n = n + array[i].toString();
-		  if (i < curpos) n = n + ","; 
+	  n = n + array[0].toString();
+	  for (int i = 1; i < arraySize; i++) {
+		  n = n + ", " + array[i].toString();
 	  }
 	  return n;
   }

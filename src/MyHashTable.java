@@ -1,4 +1,4 @@
-import java.util.Arrays;
+import java.util.*;
 
 public class MyHashTable<T> {
   protected static final int DEFAULTTABLESIZE = 101; 
@@ -7,11 +7,7 @@ public class MyHashTable<T> {
   protected Object[] table;
   private boolean[] primes;
   
-  // Sieve of Eratosthenes (https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes)
-  
-  //http://algs4.cs.princeton.edu/34hash/SeparateChainingHashST.java.html
-  //http://www.java2s.com/Code/Java/Collections-Data-Structure/Hashtablewithseparatechaining.htm
-  
+  // Sieve of Eratosthenes 
   
   private void fillSieve(int n) {
 	  primes=new boolean[n];
@@ -56,7 +52,9 @@ public class MyHashTable<T> {
   // Make the hash table logically empty.
   // Target Complexity: O(n)
   public void clear( ) {
-	  
+	  for (int i = 0; i < this.tableSize; i++) {
+		  table[i] = null;
+	  }
   }
  
   // Insert x into the hash table. If x is already present, then do 
@@ -134,7 +132,14 @@ public class MyHashTable<T> {
  
   // Returns a Set containing all of the T elements in the table. (Set is
   // an interface implemented by classes HashSet and TreeSet.)
-  public Set<T> toSet();
+  @SuppressWarnings("unchecked")
+  public Set<T> toSet() {
+	  HashSet<T> S = new HashSet<>();
+	  for (int i = 0; i < this.tableSize; i++) {
+		  S.add((T) table[i]);
+	  }
+	  return S;
+  }
  
   // Returns a pretty representation of the hash table.
   // Uses toString() of LinkedArrays.
@@ -143,13 +148,23 @@ public class MyHashTable<T> {
   // 0: | two |
   // 1: | one, four |
   // 2: 
-  public String toString();
+  public String toString() {
+	  String S = "";
+	  for (int i = 0; i < this.tableSize; i++) {
+		  //table[i] = new LinkedArrays<T>();
+		  S = S + i + ": " + table[i].toString();  
+	  }
+	  return S;
+  }
  
   // Increases the size of the table by finding a prime number 
   // (nextPrime) at least as large as twice the current table size. 
   // Rehashes the elements of the hash table when size is greater than 
   // tableSize/2.
-  protected void rehash( );
+  protected void rehash( ) {
+	  Object[] table1 = Arrays.copyOf(table, nextPrime(this.tableSize * 2));
+	  table = table1;
+  }
  
   // Internal method for computing the hash value from the hashCode of x.
   protected int myhash(T x) {

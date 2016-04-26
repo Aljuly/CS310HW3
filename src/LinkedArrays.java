@@ -13,10 +13,12 @@ public class LinkedArrays<T> {
 		  throw new IllegalArgumentException("Exception! Length Of Arrays less then 0!: " + lengthOfArrays); 
 	  } else {
 		  this.lengthOfArrays = lengthOfArrays;
-		  this.nodeCount = 0;
+		  this.nodeCount = 2;
 		  this.size = 0;
-		  this.head = null;
-		  this.tail = null;
+		  this.head = new LinkedArrayNode<T>(null, null);
+		  this.tail = new LinkedArrayNode<T>(null, null);
+		  head.next = tail;
+		  tail.prev = head;
 	  }
   }
  
@@ -95,13 +97,20 @@ public class LinkedArrays<T> {
   }
   
   //Workhorse private method for adding
-  private boolean addVal(LinkedArrayNode<T> node, T x) {
-	  if (node == null) return false;
-	  if (node.getCurpos() < lengthOfArrays) {
+  private boolean addVal(LinkedArrayNode<T> nodepr, LinkedArrayNode<T> node, T x) {
+	  if (node.equals(null)) {
+		  node = new LinkedArrayNode<T>(null, null);
+		  nodeCount++;
+		  if (!nodepr.equals(null)) {
+			  nodepr.next = node;
+			  node.prev = nodepr;
+		  }
+	  }
+	  if (node.arraySize < lengthOfArrays) {
 		  node.add(x);
 		  return true;
 	  } else {
-		  return addVal(node.next, x);
+		  return addVal(node, node.next, x);
 	  }
   }
  
@@ -114,23 +123,23 @@ public class LinkedArrays<T> {
 	  if (x == null) {
 		  throw new IllegalArgumentException("Exception! Adding Null value! ");
 	  } else {
-		  return addVal(head, x);
+		  return addVal(null, head, x);
 	  }
   }
  
   // Workhorse private method for removing
   private T removeVal(LinkedArrayNode<T> node, T x) {
-	  if (node == null) return null;
+	  if (node.equals(null)) return null;
 	  T y = node.remove(x);
-	  if (y == null) {
+	  if (y.equals(null)) {
 		  return removeVal(node.next, x);
 	  } else {
 		  // Check if current node is empty
-		  if (node.getCurpos() == 0) {
+		  if (node.arraySize == 0) {
 			  // if it is, cut it off
-			  if (node.prev != null) {
+			  if (!node.prev.equals(null)) {
 				  node.prev.next = node.next;
-				  if (node.next != null) {
+				  if (!node.next.equals(null)) {
 					  node.next.prev = node.prev;
 				  } else {
 					  this.tail = node.prev; 
